@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es" ng-app="ExampleApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <!-- bower:css -->
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.css" />
+    <!-- endbower -->
+</head>
+<body ng-controller="DemoController">
+    <div class="container">
+        <h1>Simple Table</h1>
+        <simple-table table-class="table table-bordered" source="demoCollection" ng-simple-provider="simpleTable">
+            <simple-cols>
+                <simple-col key="id"></simple-col>
+                <simple-col key="nombre"></simple-col>
+                <simple-col key="edad"></simple-col>
+                <simple-col key="sexo"></simple-col>
+                <simple-col title="estado" key="estado.nombre"></simple-col>
+            </simple-cols>
+        </simple-table>
+
+        <button class="btn btn-primary" ng-click="filtrarHombre()">Hombres</button>
+        <button class="btn btn-primary" ng-click="filtrarMujeres()">Mujeres</button>
+        <button class="btn btn-default" ng-click="resetear()">Resetear</button>
+    </div>
+
+    <!-- bower:js -->
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/jquery/dist/jquery.js"></script>
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <!-- endbower -->
+
+    <!-- injector:js -->
+    <script src="/src/app.js"></script>
+    <script src="/src/app.provider.js"></script>
+    <script src="/src/app.service.js"></script>
+    <script src="/src/directives/colDirective.js"></script>
+    <script src="/src/directives/tableDirective.js"></script>
+    <script src="/src/directives/theadDirective.js"></script>
+    <!-- endinjector -->
+
+    <script type="application/javascript">
+        var demoCollection = [
+            {id:1, nombre:'Gabriel', edad:34, sexo:'h', estado: {nombre: 'activo'}},
+            {id:2, nombre:'Juliana', edad:22, sexo:'m'},
+            {id:3, nombre:'Juan', edad:68, sexo:'h'},
+            {id:4, nombre:'Cristian', edad:25, sexo:'h', estado: {nombre: 'suspendido'}},
+            {id:5, nombre:'Laura', edad:19, sexo:'m'},
+            {id:6, nombre:'Paula', edad:38, sexo:'m'},
+            {id:7, nombre:'Alan', edad:50, sexo:'h'}
+        ];
+
+        var example = angular.module('ExampleApp', ['ngSimpleTable']);
+
+        example.filter('hombres', function(){
+            return function(input) {
+                var values = [];
+                angular.forEach(input, function (value, key) {
+                    if (value.sexo === 'h') {
+                        this.push(value);
+                    }
+                }, values);
+
+                return values;
+            }
+        });
+
+        example.filter('mujeres', function(){
+            return function(input) {
+                var values = [];
+                angular.forEach(input, function (value, key) {
+                    if (value.sexo === 'm') {
+                        this.push(value);
+                    }
+                }, values);
+
+                return values;
+            }
+        });
+
+        example.controller('DemoController', ['$scope', 'ngSimpleTable', '$filter', function($scope, ngSimpleTable, $filter){
+            $scope.simpleTable = new ngSimpleTable({
+                collection: demoCollection
+            });
+
+            $scope.filtrarHombre = function(){
+                $scope.simpleTable.filtro($filter('hombres'));
+            };
+
+            $scope.filtrarMujeres = function(){
+                $scope.simpleTable.filtro($filter('mujeres'));
+            };
+
+            $scope.resetear = function(){
+                $scope.simpleTable.resetear();
+            };
+        }]);
+    </script>
+</body>
+</html>

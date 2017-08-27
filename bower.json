@@ -1,0 +1,30 @@
+{
+  "name": "ng-simple-table",
+  "authors": [
+    "pollorojo <davidguinazu@gmail.com>"
+  ],
+  "description": "Plugin para tablas con angular. Filtros, ordenado, paginado.",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "angular": "^1.6.6",
+    "bootstrap": "^3.3.7"
+  },
+  "overrides":{
+    "bootstrap" : {
+      "main": [
+        "less/bootstrap.less",
+        "dist/css/bootstrap.css",
+        "dist/js/bootstrap.js"
+      ]
+    }
+  }
+}
