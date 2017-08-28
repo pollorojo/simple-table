@@ -26,7 +26,9 @@ app.directive('simpleTable', ['$compile', function($compile) {
             'ngSimpleProvider': '='
         },
         template: '<div>' +
-                    '<table class="{{tableClass}}" ng-transclude>' +
+                    '<table class="{{tableClass}}">' +
+                        '<thead><tr ng-transclude></tr></thead>' +
+                        '<tbody simple-body="htmlTbodyColumns"></tbody>' +
                     '</table>' +
                   '</div>',
         controller: ['$scope', '$element', function TableController($scope, $element)
@@ -58,6 +60,15 @@ app.directive('simpleTable', ['$compile', function($compile) {
                 angular.element(li).addClass('active');
             };
 
+            $scope.htmlTbodyColumns = '';
+            /**
+             *
+             * @param key
+             */
+            this.addBodyColumn = function(key) {
+                $scope.htmlTbodyColumns += '<td>{{item.'+key+'}}</td>';
+            };
+
             /**
              * Cambiar orden de columnas
              *
@@ -66,15 +77,6 @@ app.directive('simpleTable', ['$compile', function($compile) {
              */
             this.setOrder = function(key, reverse) {
                 $scope.collection = $scope.ngSimpleProvider.obtenerListaOrdenada(key, reverse);
-            };
-
-            this.render = function(tContent)
-            {
-                var paginacion = renderPagination($scope.ngSimpleProvider.obtenerCantidadPaginas(), 1),
-                    tBody      = $compile('<tbody><tr ng-repeat="item in collection">'+tContent+'</tr></tbody>')($scope);
-
-                $element.children('table').append(tBody);
-                $element.after( $compile(paginacion)($scope) );
             };
         }]
     }

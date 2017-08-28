@@ -11,14 +11,13 @@
 <body ng-controller="DemoController">
     <div class="container">
         <h1>Simple Table</h1>
+
         <simple-table table-class="table table-bordered" source="demoCollection" ng-simple-provider="simpleTable">
-            <simple-cols>
-                <simple-col key="id"></simple-col>
-                <simple-col key="nombre"></simple-col>
-                <simple-col key="edad"></simple-col>
-                <simple-col key="sexo"></simple-col>
-                <simple-col title="estado" key="estado.nombre"></simple-col>
-            </simple-cols>
+            <simple-col key="id"></simple-col>
+            <simple-col key="nombre"></simple-col>
+            <simple-col key="edad"></simple-col>
+            <simple-col key="sexo" sort="false"></simple-col>
+            <simple-col title="estado" key="estado.nombre"></simple-col>
         </simple-table>
 
         <button class="btn btn-primary" ng-click="filtrarHombre()">Hombres</button>
@@ -38,7 +37,7 @@
     <script src="/src/app.service.js"></script>
     <script src="/src/directives/colDirective.js"></script>
     <script src="/src/directives/tableDirective.js"></script>
-    <script src="/src/directives/theadDirective.js"></script>
+    <script src="/src/directives/tbodyDirective.js"></script>
     <!-- endinjector -->
 
     <script type="application/javascript">
