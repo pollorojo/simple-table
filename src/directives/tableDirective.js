@@ -1,6 +1,7 @@
 /**
  *
  * @param cantidadPaginas
+ * @param selected
  * @returns {*|Object}
  */
 function renderPagination(cantidadPaginas, selected) {
@@ -35,6 +36,9 @@ app.directive('simpleTable', ['$compile', function($compile) {
         {
             $scope.collection = $scope.ngSimpleProvider.obtenerPaginaInicio();
 
+            var cantidadPaginas = $scope.ngSimpleProvider.obtenerCantidadPaginas();
+            $element.append($compile(renderPagination(cantidadPaginas, 1))($scope));
+
             //Eventos
             $scope.ngSimpleProvider.registrarEscucha($scope);
 
@@ -43,8 +47,8 @@ app.directive('simpleTable', ['$compile', function($compile) {
             });
 
             $scope.$on("paginado", function (ev, paginas, selected) {
-                $element.next('nav').remove();
-                $element.after($compile(renderPagination(paginas, selected))($scope));
+                $element.children()[1].remove();
+                $element.append($compile(renderPagination(paginas, selected))($scope));
             });
 
             /**
