@@ -36,8 +36,9 @@ app.directive('simpleTable', ['$compile', function($compile) {
         {
             $scope.collection = $scope.ngSimpleProvider.obtenerPaginaInicio();
 
-            var cantidadPaginas = $scope.ngSimpleProvider.obtenerCantidadPaginas();
-            $element.append($compile(renderPagination(cantidadPaginas, 1))($scope));
+            var cantidadPaginas = $scope.ngSimpleProvider.obtenerCantidadPaginas(),
+            paginaInicio = $scope.ngSimpleProvider.obtenerPaginaActual();
+            $element.append($compile(renderPagination(cantidadPaginas, paginaInicio))($scope));
 
             //Eventos
             $scope.ngSimpleProvider.registrarEscucha($scope);
@@ -59,8 +60,10 @@ app.directive('simpleTable', ['$compile', function($compile) {
             $scope.paginate = function(page){
                 $scope.collection = $scope.ngSimpleProvider.irPagina(page);
 
-                $element.next('nav').children('ul').children('li.active').removeClass('active');
-                var li = $element.next('nav').children('ul').children('li')[page-1];
+                var nav = $element.children()[1];
+                angular.element(nav.querySelector('li.active')).removeClass('active');
+
+                var li = $element.find('li')[page-1];
                 angular.element(li).addClass('active');
             };
 

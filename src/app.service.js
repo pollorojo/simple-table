@@ -4,9 +4,9 @@ app.service('Simplero', ['orderByFilter', function(orderBy) {
         temporalCollection,
         config = {
             paginaInicio: 1,
-            itemsPorPagina: 3
+            itemsPorPagina: 5
         },
-        paginaActual = config.paginaInicio,
+        paginaActual = null,
         listener;
 
     this.filtro = function(filter)
@@ -14,11 +14,12 @@ app.service('Simplero', ['orderByFilter', function(orderBy) {
         temporalCollection = (filter)(originalCollection);
 
         var paginas = this.obtenerCantidadPaginas(temporalCollection);
-        paginaActual = (paginaActual > paginas) ? 1 : paginaActual;
 
-        var collection = this.irPagina(paginaActual);
+        paginaCorrecta = (this.obtenerPaginaActual() > paginas) ? 1 : this.obtenerPaginaActual();
 
-        listener.$broadcast('paginado', paginas, paginaActual);
+        var collection = this.irPagina(paginaCorrecta);
+
+        listener.$broadcast('paginado', paginas, paginaCorrecta);
         listener.$broadcast('filtrado', collection);
     };
 
@@ -53,7 +54,16 @@ app.service('Simplero', ['orderByFilter', function(orderBy) {
      */
     this.obtenerListaOrdenada = function(key, reverse) {
         temporalCollection = orderBy(temporalCollection, key, reverse);
-        return this.irPagina(paginaActual);
+        return this.irPagina(this.obtenerPaginaActual());
+    };
+
+    /**
+     *
+     * @returns {number}
+     */
+    this.obtenerPaginaActual = function()
+    {
+        return paginaActual = (paginaActual === null) ? config.paginaInicio : paginaActual;
     };
 
     /**
@@ -61,7 +71,7 @@ app.service('Simplero', ['orderByFilter', function(orderBy) {
      * @returns {Array.<T>|string|Blob|ArrayBuffer}
      */
     this.obtenerPaginaInicio = function() {
-        var desde = (paginaActual - 1) * config.itemsPorPagina,
+        var desde = (this.obtenerPaginaActual() - 1) * config.itemsPorPagina,
             hasta = desde + config.itemsPorPagina;
 
         return temporalCollection.slice(desde, hasta);
@@ -102,6 +112,10 @@ app.service('Simplero', ['orderByFilter', function(orderBy) {
     return function(params){
         if (params.hasOwnProperty('collection')) {
             temporalCollection = originalCollection =  params.collection;
+        }
+
+        if (params.hasOwnProperty('config')) {
+            config = angular.extend(config, params.config);
         }
 
         return self;

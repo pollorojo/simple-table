@@ -81,7 +81,11 @@
 
         example.controller('DemoController', ['$scope', 'ngSimpleTable', '$filter', function($scope, ngSimpleTable, $filter){
             $scope.simpleTable = new ngSimpleTable({
-                collection: demoCollection
+                collection: demoCollection,
+                config: {
+                    paginaInicio: 3,
+                    itemsPorPagina: 2
+                }
             });
 
             $scope.filtrarHombre = function(){
