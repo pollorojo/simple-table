@@ -4,6 +4,14 @@
     "pollorojo <davidguinazu@gmail.com>"
   ],
   "description": "Plugin para tablas con angular. Filtros, ordenado, paginado.",
+  "keywords": [
+    "angular",
+    "javascript",
+    "table",
+    "tablas",
+    "sort",
+    "ng"
+  ],
   "main": "",
   "license": "MIT",
   "homepage": "",
