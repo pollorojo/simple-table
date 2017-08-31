@@ -46,7 +46,9 @@
             {id:2, nombre:'Juliana', edad:22, sexo:'m'},
             {id:3, nombre:'Juan', edad:68, sexo:'h'},
             {id:4, nombre:'Cristian', edad:25, sexo:'h', estado: {nombre: 'suspendido'}},
+            {id:4, nombre:'Javier', edad:24, sexo:'h', estado: {nombre: 'activo'}},
             {id:5, nombre:'Laura', edad:19, sexo:'m'},
+            {id:4, nombre:'Ignacio', edad:20, sexo:'h', estado: {nombre: 'suspendido'}},
             {id:6, nombre:'Paula', edad:38, sexo:'m'},
             {id:7, nombre:'Alan', edad:50, sexo:'h'}
         ];
@@ -83,8 +85,8 @@
             $scope.simpleTable = new ngSimpleTable({
                 collection: demoCollection,
                 config: {
-                    paginaInicio: 3,
-                    itemsPorPagina: 2
+                    paginaInicio: 2,
+                    itemsPorPagina: 5
                 }
             });
 

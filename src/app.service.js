@@ -4,11 +4,15 @@ app.service('Simplero', ['orderByFilter', function(orderBy) {
         temporalCollection,
         config = {
             paginaInicio: 1,
-            itemsPorPagina: 5
+            itemsPorPagina: 10
         },
         paginaActual = null,
         listener;
 
+    /**
+     *
+     * @param filter
+     */
     this.filtro = function(filter)
     {
         temporalCollection = (filter)(originalCollection);
@@ -63,7 +67,10 @@ app.service('Simplero', ['orderByFilter', function(orderBy) {
      */
     this.obtenerPaginaActual = function()
     {
-        return paginaActual = (paginaActual === null) ? config.paginaInicio : paginaActual;
+        paginaActual = (paginaActual === null) ? config.paginaInicio : paginaActual;
+        paginasTotales = this.obtenerCantidadPaginas();
+
+        return (paginaActual > paginasTotales) ? 1 : paginaActual;
     };
 
     /**
@@ -91,11 +98,18 @@ app.service('Simplero', ['orderByFilter', function(orderBy) {
         return temporalCollection.slice(desde, hasta);
     };
 
+    /**
+     *
+     * @param scope
+     */
     this.registrarEscucha = function (scope)
     {
         listener = scope;
     };
 
+    /**
+     *
+     */
     this.resetear = function()
     {
         temporalCollection = originalCollection;
@@ -109,6 +123,9 @@ app.service('Simplero', ['orderByFilter', function(orderBy) {
         listener.$broadcast('filtrado', collection);
     };
 
+    /**
+     *
+     */
     return function(params){
         if (params.hasOwnProperty('collection')) {
             temporalCollection = originalCollection =  params.collection;
