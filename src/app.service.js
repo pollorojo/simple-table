@@ -1,7 +1,7 @@
 app.service('Simplero', ['orderByFilter', function(orderBy) {
     var self = this,
-        originalCollection,
-        temporalCollection,
+        originalCollection = [],
+        temporalCollection = [],
         config = {
             paginaInicio: 1,
             itemsPorPagina: 10
@@ -17,15 +17,22 @@ app.service('Simplero', ['orderByFilter', function(orderBy) {
     {
         temporalCollection = (filter)(originalCollection);
 
-        var paginas = this.obtenerCantidadPaginas(temporalCollection);
-
-        paginaCorrecta = (this.obtenerPaginaActual() > paginas) ? 1 : this.obtenerPaginaActual();
-
-        var collection = this.irPagina(paginaCorrecta);
-
-        listener.$broadcast('paginado', paginas, paginaCorrecta);
-        listener.$broadcast('filtrado', collection);
+        actualizar(temporalCollection);
     };
+
+    function actualizar(paramCollection)
+    {
+        var paginas = self.obtenerCantidadPaginas(paramCollection);
+
+        var paginaCorrecta = (self.obtenerPaginaActual() > paginas) ? 1 : self.obtenerPaginaActual();
+
+        var collection = self.irPagina(paginaCorrecta);
+
+        if (angular.isUndefined(listener) === false) {
+            listener.$broadcast('paginado', paginas, paginaCorrecta);
+            listener.$broadcast('filtrado', collection);
+        }
+    }
 
     /**
      *
@@ -68,7 +75,7 @@ app.service('Simplero', ['orderByFilter', function(orderBy) {
     this.obtenerPaginaActual = function()
     {
         paginaActual = (paginaActual === null) ? config.paginaInicio : paginaActual;
-        paginasTotales = this.obtenerCantidadPaginas();
+        var paginasTotales = this.obtenerCantidadPaginas();
 
         return (paginaActual > paginasTotales) ? 1 : paginaActual;
     };
@@ -123,13 +130,29 @@ app.service('Simplero', ['orderByFilter', function(orderBy) {
         listener.$broadcast('filtrado', collection);
     };
 
+    this.isValidCollection = function(collection) {
+        return angular.isArray(collection);
+    };
+
+    this.setCollection = function(collection)
+    {
+        var result = false;
+
+        if (this.isValidCollection(collection)) {
+            temporalCollection = originalCollection = collection;
+            actualizar(temporalCollection);
+            result = true;
+        }
+
+        return result;
+    };
+
     /**
      *
      */
-    return function(params){
-        if (params.hasOwnProperty('collection')) {
-            temporalCollection = originalCollection =  params.collection;
-        }
+    return function(params)
+    {
+        self.setCollection(params.collection);
 
         if (params.hasOwnProperty('config')) {
             config = angular.extend(config, params.config);

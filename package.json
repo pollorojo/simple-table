@@ -10,6 +10,9 @@
   "license": "ISC",
   "devDependencies": {
     "grunt": "^1.0.1",
-    "grunt-injector": "^1.1.0"
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-uglify": "^3.0.1",
+    "grunt-injector": "^1.1.0",
+    "grunt-ng-annotate": "^3.0.0"
   }
 }

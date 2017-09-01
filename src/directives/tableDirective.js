@@ -34,14 +34,14 @@ app.directive('simpleTable', ['$compile', function($compile) {
                   '</div>',
         controller: ['$scope', '$element', function TableController($scope, $element)
         {
+            //Eventos
+            $scope.ngSimpleProvider.registrarEscucha($scope);
+
             $scope.collection = $scope.ngSimpleProvider.obtenerPaginaInicio();
 
             var cantidadPaginas = $scope.ngSimpleProvider.obtenerCantidadPaginas(),
             paginaInicio = $scope.ngSimpleProvider.obtenerPaginaActual();
             $element.append($compile(renderPagination(cantidadPaginas, paginaInicio))($scope));
-
-            //Eventos
-            $scope.ngSimpleProvider.registrarEscucha($scope);
 
             $scope.$on("filtrado", function (ev, collection) {
                 $scope.collection = collection;
