@@ -6,14 +6,15 @@
 
     <!-- bower:css -->
     <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material-data-table/0.10.10/md-data-table.css" />
     <!-- endbower -->
 </head>
 <body ng-controller="DemoController">
     <div class="container">
         <h1>Simple Table</h1>
 
-        <simple-table table-class="table table-bordered" source="demoCollection" ng-simple-provider="simpleTable">
-            <simple-col key="id"></simple-col>
+        <simple-table class="table table-bordered table-stripped" source="demoCollection" ng-simple-provider="simpleTable">
+            <simple-col key="id" title="#"></simple-col>
             <simple-col key="nombre"></simple-col>
             <simple-col key="edad"></simple-col>
             <simple-col key="sexo" sort="false"></simple-col>
@@ -86,7 +87,17 @@
                 collection: demoCollection,
                 config: {
                     paginaInicio: 2,
-                    itemsPorPagina: 5
+                    itemsPorPagina: 5,
+                    defaultClasses: true
+                },
+                classes: {
+                    "table": "md-table",
+                    "table.thead": "md-head",
+                    "table.thead.tr": "md-row",
+                    "table.thead.tr.th": "md-column",
+                    "table.tbody": "md-body",
+                    "table.tbody.tr": "md-row",
+                    "table.tbody.tr.td": "md-cell"
                 }
             });
 

@@ -4,7 +4,17 @@ app.service('Simplero', ['orderByFilter', function(orderBy) {
         temporalCollection = [],
         config = {
             paginaInicio: 1,
-            itemsPorPagina: 10
+            itemsPorPagina: 10,
+            defaultClasses: true
+        },
+        classes = {
+            "table": "ng-simple-table",
+            "table.thead": "ng-simple-head",
+            "table.thead.tr": "ng-simple-row",
+            "table.thead.tr.th": "ng-simple-column",
+            "table.tbody": "ng-simple-body",
+            "table.tbody.tr": "ng-simple-row",
+            "table.tbody.tr.td": "ng-simple-cell"
         },
         paginaActual = null,
         listener;
@@ -149,13 +159,49 @@ app.service('Simplero', ['orderByFilter', function(orderBy) {
 
     /**
      *
+     * @param elementName
+     * @returns {string}
+     */
+    this.getClassNameTableElement = function(elementName)
+    {
+        var value = null;
+
+        if (classes.hasOwnProperty(elementName)) {
+            value = classes[elementName];
+        }
+
+        return value;
+    };
+
+    /**
+     *
+     * @returns {boolean}
+     */
+    this.useDefaultClasses = function ()
+    {
+        return config.defaultClasses;
+    };
+
+    /**
+     *
      */
     return function(params)
     {
         self.setCollection(params.collection);
 
         if (params.hasOwnProperty('config')) {
+            //Uso de clases por defecto.
+            if (params.config.hasOwnProperty('defaultClasses')) {
+                if (typeof params.config.defaultClasses !== 'boolean') {
+                    params.config.defaultClasses = config.defaultClasses;
+                }
+            }
+
             config = angular.extend(config, params.config);
+        }
+
+        if (params.hasOwnProperty('classes')) {
+            classes = angular.extend(classes, params.classes);
         }
 
         return self;
