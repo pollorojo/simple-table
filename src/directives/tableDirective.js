@@ -22,18 +22,46 @@ app.directive('simpleTable', ['$compile', function($compile) {
         restrict: 'E',
         transclude: true,
         scope: {
-            'tableClass': '@',
+            'class': '@',
             'source': '=',
             'ngSimpleProvider': '='
         },
         template: '<div>' +
                     '<table class="{{tableClass}}">' +
-                        '<thead><tr ng-transclude></tr></thead>' +
-                        '<tbody simple-body="htmlTbodyColumns"></tbody>' +
+                        '<thead class="{{theadClass}}"><tr ng-transclude class="{{theadRowClass}}"></tr></thead>' +
+                        '<tbody class="{{tbodyClass}}" simple-body="htmlTbodyColumns"></tbody>' +
                     '</table>' +
                   '</div>',
         controller: ['$scope', '$element', function TableController($scope, $element)
         {
+            var vm = this;
+
+            $element[0].className = '';
+
+            //Clases de tabla
+            if (angular.isDefined($scope.class) && $scope.ngSimpleProvider.useDefaultClasses() === false) {
+                if ($scope.class.length > 0) {
+                    $scope.tableClass = $scope.class;
+                }
+            } else {
+                $scope.tableClass    = getClassName("table");
+                $scope.theadClass    = getClassName("table.thead");
+                $scope.theadRowClass = getClassName("table.thead.tr");
+                $scope.tbodyClass    = getClassName("table.tbody");
+                $scope.trowClass     = getClassName("table.tbody.tr");
+                $scope.tbodyTdClass  = getClassName("table.tbody.tr.td");
+            }
+
+            /**
+             *
+             * @param name
+             * @returns {string}
+             */
+            function getClassName(name) {
+                return $scope.ngSimpleProvider.getClassNameTableElement(name);
+            }
+
+
             //Eventos
             $scope.ngSimpleProvider.registrarEscucha($scope);
 
@@ -73,7 +101,7 @@ app.directive('simpleTable', ['$compile', function($compile) {
              * @param key
              */
             this.addBodyColumn = function(key) {
-                $scope.htmlTbodyColumns += '<td>{{item.'+key+'}}</td>';
+                $scope.htmlTbodyColumns += '<td class="{{tbodyTdClass}}">{{item.'+key+'}}</td>';
             };
 
             /**

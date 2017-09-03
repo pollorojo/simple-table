@@ -15,6 +15,10 @@ app.directive('simpleCol', ['$compile', function($compile)
         compile: function(tElem, attrs) {
             return function(scope, elem, attrs, IndexController) {
 
+                if (scope.$parent.$parent.ngSimpleProvider.useDefaultClasses()) {
+                    scope.tcolumnClass = scope.$parent.$parent.ngSimpleProvider.getClassNameTableElement("table.thead.tr.th");
+                }
+
                 scope.sort = (angular.isUndefined(scope.sort)) ? true : scope.sort;
 
                 var sortReverse = false;
@@ -29,7 +33,7 @@ app.directive('simpleCol', ['$compile', function($compile)
                 IndexController.addBodyColumn(attrs.key);
             };
         },
-        template: '<th>' +
+        template: '<th class="{{tcolumnClass}}">' +
             '<a href="" ng-if="(sort==true)" ng-click="changeOrder(key)">{{nombreColumna}}</a>' +
             '<span ng-if="(sort==false)">{{nombreColumna}}</span>' +
         '</th>'

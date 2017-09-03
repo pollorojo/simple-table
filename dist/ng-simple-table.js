@@ -19,7 +19,17 @@ app.service('Simplero', ['orderByFilter', function(orderBy) {
         temporalCollection = [],
         config = {
             paginaInicio: 1,
-            itemsPorPagina: 10
+            itemsPorPagina: 10,
+            defaultClasses: true
+        },
+        classes = {
+            "table": "ng-simple-table",
+            "table.thead": "ng-simple-head",
+            "table.thead.tr": "ng-simple-row",
+            "table.thead.tr.th": "ng-simple-column",
+            "table.tbody": "ng-simple-body",
+            "table.tbody.tr": "ng-simple-row",
+            "table.tbody.tr.td": "ng-simple-cell"
         },
         paginaActual = null,
         listener;
@@ -164,13 +174,49 @@ app.service('Simplero', ['orderByFilter', function(orderBy) {
 
     /**
      *
+     * @param elementName
+     * @returns {string}
+     */
+    this.getClassNameTableElement = function(elementName)
+    {
+        var value = null;
+
+        if (classes.hasOwnProperty(elementName)) {
+            value = classes[elementName];
+        }
+
+        return value;
+    };
+
+    /**
+     *
+     * @returns {boolean}
+     */
+    this.useDefaultClasses = function ()
+    {
+        return config.defaultClasses;
+    };
+
+    /**
+     *
      */
     return function(params)
     {
         self.setCollection(params.collection);
 
         if (params.hasOwnProperty('config')) {
+            //Uso de clases por defecto.
+            if (params.config.hasOwnProperty('defaultClasses')) {
+                if (typeof params.config.defaultClasses !== 'boolean') {
+                    params.config.defaultClasses = config.defaultClasses;
+                }
+            }
+
             config = angular.extend(config, params.config);
+        }
+
+        if (params.hasOwnProperty('classes')) {
+            classes = angular.extend(classes, params.classes);
         }
 
         return self;
@@ -193,6 +239,10 @@ app.directive('simpleCol', ['$compile', function($compile)
         compile: function(tElem, attrs) {
             return function(scope, elem, attrs, IndexController) {
 
+                if (scope.$parent.$parent.ngSimpleProvider.useDefaultClasses()) {
+                    scope.tcolumnClass = scope.$parent.$parent.ngSimpleProvider.getClassNameTableElement("table.thead.tr.th");
+                }
+
                 scope.sort = (angular.isUndefined(scope.sort)) ? true : scope.sort;
 
                 var sortReverse = false;
@@ -207,7 +257,7 @@ app.directive('simpleCol', ['$compile', function($compile)
                 IndexController.addBodyColumn(attrs.key);
             };
         },
-        template: '<th>' +
+        template: '<th class="{{tcolumnClass}}">' +
             '<a href="" ng-if="(sort==true)" ng-click="changeOrder(key)">{{nombreColumna}}</a>' +
             '<span ng-if="(sort==false)">{{nombreColumna}}</span>' +
         '</th>'
@@ -237,18 +287,46 @@ app.directive('simpleTable', ['$compile', function($compile) {
         restrict: 'E',
         transclude: true,
         scope: {
-            'tableClass': '@',
+            'class': '@',
             'source': '=',
             'ngSimpleProvider': '='
         },
         template: '<div>' +
                     '<table class="{{tableClass}}">' +
-                        '<thead><tr ng-transclude></tr></thead>' +
-                        '<tbody simple-body="htmlTbodyColumns"></tbody>' +
+                        '<thead class="{{theadClass}}"><tr ng-transclude class="{{theadRowClass}}"></tr></thead>' +
+                        '<tbody class="{{tbodyClass}}" simple-body="htmlTbodyColumns"></tbody>' +
                     '</table>' +
                   '</div>',
         controller: ['$scope', '$element', function TableController($scope, $element)
         {
+            var vm = this;
+
+            $element[0].className = '';
+
+            //Clases de tabla
+            if (angular.isDefined($scope.class) && $scope.ngSimpleProvider.useDefaultClasses() === false) {
+                if ($scope.class.length > 0) {
+                    $scope.tableClass = $scope.class;
+                }
+            } else {
+                $scope.tableClass    = getClassName("table");
+                $scope.theadClass    = getClassName("table.thead");
+                $scope.theadRowClass = getClassName("table.thead.tr");
+                $scope.tbodyClass    = getClassName("table.tbody");
+                $scope.trowClass     = getClassName("table.tbody.tr");
+                $scope.tbodyTdClass  = getClassName("table.tbody.tr.td");
+            }
+
+            /**
+             *
+             * @param name
+             * @returns {string}
+             */
+            function getClassName(name) {
+                return $scope.ngSimpleProvider.getClassNameTableElement(name);
+            }
+
+
             //Eventos
             $scope.ngSimpleProvider.registrarEscucha($scope);
 
@@ -288,7 +366,7 @@ app.directive('simpleTable', ['$compile', function($compile) {
              * @param key
              */
             this.addBodyColumn = function(key) {
-                $scope.htmlTbodyColumns += '<td>{{item.'+key+'}}</td>';
+                $scope.htmlTbodyColumns += '<td class="{{tbodyTdClass}}">{{item.'+key+'}}</td>';
             };
 
             /**
@@ -312,7 +390,7 @@ app.directive('simpleBody', ['$compile',function($compile)
         replace: false,
         scope: {},
         link: function(scope, element){
-            element.html( '<tr ng-repeat="item in collection">'+scope.$parent.htmlTbodyColumns+'</tr>' );
+            element.html( '<tr ng-repeat="item in collection" class="{{trowClass}}">'+scope.$parent.htmlTbodyColumns+'</tr>' );
             $compile(element.contents())(scope.$parent);
         }
     }
